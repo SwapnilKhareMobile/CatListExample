@@ -2,6 +2,8 @@ package com.example.catlistexample.di
 
 import com.example.catlistexample.network.APIHelper
 import com.example.catlistexample.util.BASE_URL
+import com.example.catlistexample.util.HEADER_API_VALUE
+import com.example.catlistexample.util.HEADER_KEY
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,8 +44,8 @@ class NetworkModule {
             val original: Request = chain.request()
             val requestBuilder: Request.Builder = original.newBuilder()
                 .header(
-                    "x-api-key",
-                    "live_VcvNYvwdCt8JhGR9XkCIkAzoAb56tZGY0rK07uX6hsTlt1erYFi6MJ2M75HHeLdH"
+                    HEADER_KEY,
+                    HEADER_API_VALUE
                 )
             val request: Request = requestBuilder.build()
             chain.proceed(request)

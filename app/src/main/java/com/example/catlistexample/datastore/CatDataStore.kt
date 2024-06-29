@@ -40,12 +40,6 @@ class CatDataStore(private val context: Context) {
         }
     }
 
-    fun getSavedCatUrl(id: String): Flow<String?> {
-        return context.dataStore.data.map { preferences ->
-            preferences[catUrlKey(id)]
-        }
-    }
-
     fun getAllSavedCats(): Flow<Map<String, String>> {
         return context.dataStore.data.map { preferences ->
             preferences.asMap().filterKeys { it.name.startsWith(CAT_URL_PREFIX) }

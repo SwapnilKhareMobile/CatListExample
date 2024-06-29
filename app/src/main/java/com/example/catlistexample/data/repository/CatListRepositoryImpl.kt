@@ -29,11 +29,8 @@ class CatListRepositoryImpl @Inject constructor(
 
     override suspend fun toggleCatFavorite(cat: CatDataResponseItem) {
         val isFavorite = localDataStore.isCatSaved(cat.id).first()
-        if (isFavorite) {
-            localDataStore.removeSavedCat(cat.id)
-        } else {
+        if (isFavorite) localDataStore.removeSavedCat(cat.id) else
             localDataStore.setSavedCat(cat.id, cat.url)
-        }
     }
 
     fun getFavoriteCats(): Flow<List<CatDataResponseItem>> {

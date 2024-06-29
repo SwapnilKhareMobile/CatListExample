@@ -18,26 +18,21 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class RepoModule {
 
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(catApiService: APIHelper): RemoteDataSource =
+        RemoteCatListSource(catApiService)
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(catApiService: APIHelper): RemoteDataSource {
-        return RemoteCatListSource(catApiService)
-    }
-
-    @Provides
-    @Singleton
-    fun provideDataStore(@ApplicationContext context: Context): CatDataStore {
-        return CatDataStore(context)
-    }
+    fun provideDataStore(@ApplicationContext context: Context): CatDataStore =
+        CatDataStore(context)
 
     @Provides
     @Singleton
     fun provideCatRepository(
         remoteDataSource: RemoteCatListSource,
         bookmarkDataStore: CatDataStore
-    ): CatDataRepository {
-        return CatListRepositoryImpl(remoteDataSource, bookmarkDataStore)
-    }
+    ): CatDataRepository = CatListRepositoryImpl(remoteDataSource, bookmarkDataStore)
 
 }

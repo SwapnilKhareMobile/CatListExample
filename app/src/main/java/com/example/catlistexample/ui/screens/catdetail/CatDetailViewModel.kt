@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class CatDetailViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle):ViewModel() {
+class CatDetailViewModel @Inject constructor(savedStateHandle: SavedStateHandle) : ViewModel() {
     val selectedTopicId: StateFlow<String?> = savedStateHandle.getStateFlow(CAT_ID_ARG, null)
 
 }

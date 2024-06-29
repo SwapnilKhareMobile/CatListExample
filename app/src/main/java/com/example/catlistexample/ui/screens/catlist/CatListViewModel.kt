@@ -18,32 +18,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CatListViewModel @Inject constructor(private val catRepository: CatListRepositoryImpl,private val savedStateHandle: SavedStateHandle,):ViewModel() {
-    private var catList = MutableStateFlow<CatListUIState>(CatListUIState.None)
-    val _catList:StateFlow<CatListUIState> = catList
-
-    val deepLinkedCatResource = savedStateHandle.getStateFlow<String?>("","")
-
-    fun updateCatSelection(catId: String, isChecked: Boolean) {
-        viewModelScope.launch {
-        }
-    }
-
-    fun onCatItemClicked(catResourceId: String) {
-        if (catResourceId == deepLinkedCatResource.value?:"") {
-            savedStateHandle[LINKED_CAT_RESOURCE_ID] = null
-        }
-    }
+    var mCatList = MutableStateFlow<CatListUIState>(CatListUIState.None)
+    val catList:StateFlow<CatListUIState> = mCatList
 
     init {
         fetchCatListData()
     }
 
-    private fun fetchCatListData(){
+    fun fetchCatListData(){
         viewModelScope.launch {
             catRepository.getCats()
-                .onStart { catList.value = CatListUIState.Loading }
-                .catch { catList.value = CatListUIState.Error }
-                .collectLatest { catList.value = CatListUIState.Success(it) }
+                .onStart { mCatList.value = CatListUIState.Loading }
+                .catch { mCatList.value = CatListUIState.Error }
+                .collectLatest { mCatList.value = CatListUIState.Success(it) }
         }
 
     }
@@ -54,7 +41,7 @@ class CatListViewModel @Inject constructor(private val catRepository: CatListRep
                  val updatedList = successState.cats.map {
                      if (it.id == cat.id) it.copy(isFavorite = !it.isFavorite) else it
                  }
-                 catList.value = CatListUIState.Success(updatedList)
+                 mCatList.value = CatListUIState.Success(updatedList)
              }
 
          }

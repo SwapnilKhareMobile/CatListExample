@@ -12,7 +12,7 @@ const val CAT_LIST_ROUTE = "cat_list_route/{$LINKED_CAT_RESOURCE_ID}"
 
 fun NavController.navigateToCatList(navOptions: NavOptions) = navigate(CAT_LIST_ROUTE, navOptions)
 
-fun NavGraphBuilder.catListScreen(onCatItemClick: (String) -> Unit,) {
+fun NavGraphBuilder.catListScreen(onCatItemClick: (String) -> Unit) {
     composable(
         route = CAT_LIST_ROUTE,
         arguments = listOf(

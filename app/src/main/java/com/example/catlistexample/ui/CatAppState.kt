@@ -11,8 +11,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.example.catlistexample.ui.screens.favcat.CAT_FAV_ROUTE
-import com.example.catlistexample.ui.screens.catlist.CAT_LIST_ROUTE
 import com.example.catlistexample.navigation.TopLevelDestination
 import com.example.catlistexample.ui.screens.catlist.navigateToCatList
 import com.example.catlistexample.ui.screens.favcat.navigateToFavourites

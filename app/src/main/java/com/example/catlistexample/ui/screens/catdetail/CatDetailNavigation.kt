@@ -14,7 +14,7 @@ const val CAT_ID_ARG = "catId"
 const val DETAIL_ROUTE_BASE = "interests_route"
 const val DETAIL_ROUTE = "$DETAIL_ROUTE_BASE?$CAT_ID_ARG={$CAT_ID_ARG}"
 
-fun NavController.navigateToCatDetail(catId: String? =null, navOptions: NavOptions? = null) {
+fun NavController.navigateToCatDetail(catId: String? = null, navOptions: NavOptions? = null) {
     val route = if (catId != null) {
         "${DETAIL_ROUTE_BASE}?${CAT_ID_ARG}=$catId"
     } else {
@@ -30,6 +30,6 @@ fun NavGraphBuilder.catDetailScreen() {
             navArgument(CAT_ID_ARG) { type = NavType.StringType }
         )
     ) {
-            CatDetailScreen()
+        CatDetailScreen()
     }
 }

@@ -8,6 +8,6 @@ const val CAT_URL_PREFIX = "cat_url_"
 const val CAT_FAV_PREFIX = "cat_fav_"
 
 const val LINKED_CAT_RESOURCE_ID = "linkedCatResourceId"
-const val CAT_LIST_SCREEN_ROUTE = "catListScreenRoute"
-const val CAT_LIST_FAVORITE_SCREEN_ROUTE = "catListFavoriteScreenRoute"
-const val CAT_DETAIL_SCREEN_ROUTE = "catDetailScreenRoute"
+const val HEADER_KEY = "x-api-key"
+const val HEADER_API_VALUE = "live_VcvNYvwdCt8JhGR9XkCIkAzoAb56tZGY0rK07uX6hsTlt1erYFi6MJ2M75HHeLdH"
+

@@ -13,13 +13,17 @@ retrofit = "2.0.0-beta2"
 converterGson = "2.11.0"
 loggingInterceptor = "5.0.0-alpha.14"
 hiltAndroid = "2.51.1"
-roomVer = "2.7.0-alpha04"
 hiltNavigationCompose = "1.2.0"
 lifecycleRuntimeComposeAndroid = "2.8.2"
 adaptiveAndroid = "1.0.0-beta03"
 material3AdaptiveNavigationSuiteAndroid = "1.3.0-beta03"
 coilCompose = "2.6.0"
 datastorePreferences = "1.1.1"
+mockk = "1.13.11"
+kotlinxCoroutinesTest = "1.2.1"
+uiTestJunit4 = "1.7.0-beta04"
+uiTestManifest = "1.7.0-beta04"
+mockkAndroid = "1.13.11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +53,11 @@ androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", nam
 androidx-material3-adaptive-navigation-suite-android = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite-android", version.ref = "material3AdaptiveNavigationSuiteAndroid" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "uiTestJunit4" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "uiTestManifest" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockkAndroid" }
 
 
 [plugins]

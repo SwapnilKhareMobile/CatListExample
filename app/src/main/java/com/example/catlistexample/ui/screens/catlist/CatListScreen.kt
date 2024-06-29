@@ -39,21 +39,11 @@ fun CatListScreen(
     onCatItemClick: (String) -> Unit,
     viewModel: CatListViewModel = hiltViewModel()
 ) {
-    val state by viewModel._catList.collectAsStateWithLifecycle()
+    val state by viewModel.catList.collectAsStateWithLifecycle()
     when (state) {
-        CatListUIState.Error -> Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Please try again")
-        }
+        CatListUIState.Error -> ShowErrorMsg()
 
-        CatListUIState.Loading -> Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        CatListUIState.Loading -> ShowProgress()
 
         CatListUIState.None -> {}
         is CatListUIState.Success -> {
@@ -139,5 +129,25 @@ fun CatItems(
                     .clickable { onToggleClick(catDataResponseItem) }
             )
         }
+    }
+}
+
+@Composable
+fun ShowErrorMsg() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Please try again")
+    }
+}
+
+@Composable
+fun ShowProgress() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
