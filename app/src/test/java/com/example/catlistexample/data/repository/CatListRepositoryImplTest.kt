@@ -30,8 +30,8 @@ class CatListRepositoryImplTest {
 
     @Test
     fun `getCats returns mapped list with favorites`() = runBlocking {
-        // Given
-        val catDataResponseItem = CatDataResponseItem(emptyList(), 0, "1", "https://example.com/cat1.jpg", 0)
+        val catDataResponseItem =
+            CatDataResponseItem(emptyList(), 0, "1", "https://example.com/cat1.jpg", 0)
         val catDataResponse = CatDataResponse().apply {
             add(catDataResponseItem)
         }
@@ -41,10 +41,8 @@ class CatListRepositoryImplTest {
         coEvery { remoteDataSource.fetchCatData() } returns remoteFlow
         coEvery { localDataStore.isCatSaved("1") } returns flowOf(true)
 
-        // When
         val result = catRepository.getCats().first()
 
-        // Then
         assertEquals(1, result.size)
         assertEquals("1", result[0].id)
         assertEquals(true, result[0].isFavorite)
@@ -52,28 +50,37 @@ class CatListRepositoryImplTest {
 
     @Test
     fun `toggleCatFavorite removes cat if already favorite`() = runBlocking {
-        // Given
-        val catDataResponseItem = CatDataResponseItem(emptyList(), 0, "1", "https://example.com/cat1.jpg", 0, isFavorite = true)
+        val catDataResponseItem = CatDataResponseItem(
+            emptyList(),
+            0,
+            "1",
+            "https://example.com/cat1.jpg",
+            0,
+            isFavorite = true
+        )
         coEvery { localDataStore.isCatSaved("1") } returns flowOf(true)
         coEvery { localDataStore.removeSavedCat("1") } just Runs
-        // When
+
         catRepository.toggleCatFavorite(catDataResponseItem)
 
-        // Then
         coVerify { localDataStore.removeSavedCat("1") }
     }
 
     @Test
     fun `toggleCatFavorite adds cat if not favorite`() = runBlocking {
-        // Given
-        val catDataResponseItem = CatDataResponseItem(emptyList(), 0, "1", "https://example.com/cat1.jpg", 0, isFavorite = false)
+        val catDataResponseItem = CatDataResponseItem(
+            emptyList(),
+            0,
+            "1",
+            "https://example.com/cat1.jpg",
+            0,
+            isFavorite = false
+        )
         coEvery { localDataStore.isCatSaved("1") } returns flowOf(false)
         coEvery { localDataStore.setSavedCat("1", "https://example.com/cat1.jpg") } just Runs
 
-        // When
         catRepository.toggleCatFavorite(catDataResponseItem)
 
-        // Then
         coVerify { localDataStore.setSavedCat("1", "https://example.com/cat1.jpg") }
     }
 
@@ -83,10 +90,8 @@ class CatListRepositoryImplTest {
         val savedCats = mapOf("1" to "https://example.com/cat1.jpg")
         coEvery { localDataStore.getAllSavedCats() } returns flowOf(savedCats)
 
-        // When
         val result = catRepository.getFavoriteCats().first()
 
-        // Then
         assertEquals(1, result.size)
         assertEquals("1", result[0].id)
         assertEquals("https://example.com/cat1.jpg", result[0].url)

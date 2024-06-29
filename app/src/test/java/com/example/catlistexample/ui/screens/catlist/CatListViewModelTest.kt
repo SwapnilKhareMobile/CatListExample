@@ -23,37 +23,30 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class CatListViewModelTest{
+class CatListViewModelTest {
     private lateinit var catRepository: CatListRepositoryImpl
     private lateinit var viewModel: CatListViewModel
 
-    // Define a TestDispatcher to control the coroutine execution
     private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
-        // Set the main dispatcher to a test dispatcher for coroutine testing
         Dispatchers.setMain(testDispatcher)
 
-        // Initialize the repository mock
         catRepository = mockk()
 
-        // Stub the getCats method to prevent initialization issues
         coEvery { catRepository.getCats() } returns flowOf(emptyList())
 
-        // Initialize the ViewModel with the mocked repository
         viewModel = CatListViewModel(catRepository, SavedStateHandle())
     }
 
     @After
     fun tearDown() {
-        // Reset the main dispatcher after tests
         Dispatchers.resetMain()
     }
 
     @Test
     fun `fetchCatListData should update state to Success when data is fetched`() = runTest {
-        // Given
         val catDataResponseItem = CatDataResponseItem(
             breeds = emptyList(),
             height = 100,
@@ -63,17 +56,13 @@ class CatListViewModelTest{
         )
         val catList = listOf(catDataResponseItem)
 
-        // Mock the repository to return a flow with the expected cat list
         coEvery { catRepository.getCats() } returns flowOf(catList)
 
-        // When
         viewModel.fetchCatListData()
 
-        // Then
-        // Allow the coroutines to run
-        advanceUntilIdle() // Make sure to use this to wait for all coroutines to complete
 
-        // Check the state after coroutine execution
+        advanceUntilIdle()
+
         val state = viewModel.catList.value
         assertTrue(state is CatListUIState.Success)
         assertEquals(catList, (state as CatListUIState.Success).cats)
@@ -81,25 +70,21 @@ class CatListViewModelTest{
 
     @Test
     fun `fetchCatListData should update state to Error when exception is thrown`() = runTest {
-        // Given
-        // Mock the repository to throw an exception
+
         coEvery { catRepository.getCats() } returns flow { throw RuntimeException("Error fetching data") }
 
-        // When
+
         viewModel.fetchCatListData()
 
-        // Then
-        // Allow the coroutines to run
-        advanceUntilIdle() // Make sure to use this to wait for all coroutines to complete
 
-        // Check the state after coroutine execution
+        advanceUntilIdle()
+
         val state = viewModel.catList.value
         assertTrue(state is CatListUIState.Error)
     }
 
     @Test
     fun `onToggleCatData should toggle favorite status`() = runTest {
-        // Given
         val catDataResponseItem = CatDataResponseItem(
             breeds = emptyList(),
             height = 100,
@@ -110,24 +95,18 @@ class CatListViewModelTest{
         )
         val initialList = listOf(catDataResponseItem)
 
-        // Set the initial state to Success with the initial list
         viewModel = CatListViewModel(catRepository, SavedStateHandle())
         viewModel.mCatList.value = CatListUIState.Success(initialList)
 
-        // Mock the repository to return Unit when toggling the favorite status
         coEvery { catRepository.toggleCatFavorite(any()) } just Runs
 
-        // Mock the repository getCats call to avoid unstubbed call issues during ViewModel init
         coEvery { catRepository.getCats() } returns flowOf(emptyList())
 
-        // When
         viewModel.onToggleCatData(catDataResponseItem)
 
-        // Then
-        // Allow the coroutines to run
-        advanceUntilIdle() // Make sure to use this to wait for all coroutines to complete
 
-        // Check the state after coroutine execution
+        advanceUntilIdle()
+
         val state = viewModel.catList.value
         assertTrue(state is CatListUIState.Success)
         assertEquals(true, (state as CatListUIState.Success).cats[0].isFavorite)
