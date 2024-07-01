@@ -8,7 +8,6 @@ import com.example.catlistexample.ui.screens.catdetail.catDetailScreen
 import com.example.catlistexample.ui.screens.catdetail.navigateToCatDetail
 import com.example.catlistexample.ui.screens.catlist.CAT_LIST_ROUTE
 import com.example.catlistexample.ui.screens.catlist.catListScreen
-import com.example.catlistexample.ui.screens.catlist.navigateToCatList
 import com.example.catlistexample.ui.screens.favcat.favouriteScreen
 
 @Composable

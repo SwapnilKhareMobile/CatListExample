@@ -3,7 +3,8 @@ package com.example.catlistexample.di
 import android.content.Context
 import com.example.catlistexample.data.repository.CatDataRepository
 import com.example.catlistexample.data.repository.CatListRepositoryImpl
-import com.example.catlistexample.data.resource.RemoteCatListSource
+import com.example.catlistexample.data.resource.LocalCatDataSourceImpl
+import com.example.catlistexample.data.resource.RemoteCatDataSourceImpl
 import com.example.catlistexample.data.resource.RemoteDataSource
 import com.example.catlistexample.datastore.CatDataStore
 import com.example.catlistexample.network.APIHelper
@@ -21,7 +22,7 @@ class RepoModule {
     @Provides
     @Singleton
     fun provideRemoteDataSource(catApiService: APIHelper): RemoteDataSource =
-        RemoteCatListSource(catApiService)
+        RemoteCatDataSourceImpl(catApiService)
 
     @Provides
     @Singleton
@@ -30,9 +31,14 @@ class RepoModule {
 
     @Provides
     @Singleton
+    fun provideLocalDataSource(dataStore: CatDataStore): LocalCatDataSourceImpl =
+        LocalCatDataSourceImpl(dataStore)
+
+    @Provides
+    @Singleton
     fun provideCatRepository(
-        remoteDataSource: RemoteCatListSource,
-        bookmarkDataStore: CatDataStore
-    ): CatDataRepository = CatListRepositoryImpl(remoteDataSource, bookmarkDataStore)
+        remoteDataSource: RemoteDataSource,
+        localDataStore: LocalCatDataSourceImpl
+    ): CatDataRepository = CatListRepositoryImpl(remoteDataSource, localDataStore)
 
 }

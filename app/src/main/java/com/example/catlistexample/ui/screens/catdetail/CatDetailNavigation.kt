@@ -6,9 +6,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.catlistexample.ui.screens.favcat.CAT_FAV_ROUTE
-import com.example.catlistexample.ui.screens.favcat.CatFavScreen
-import com.example.catlistexample.util.LINKED_CAT_RESOURCE_ID
 
 const val CAT_ID_ARG = "catId"
 const val DETAIL_ROUTE_BASE = "interests_route"

@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.example.catlistexample.R
 import com.example.catlistexample.model.CatDataResponseItem
+import com.example.catlistexample.model.FavCatDataResponseItem
 
 @Composable
 fun CatListScreen(
@@ -67,7 +68,7 @@ fun CatListScreen(
 
 @Composable
 fun CatItems(
-    catDataResponseItem: CatDataResponseItem, onCatItemClick: (String) -> Unit,
+    catDataResponseItem: FavCatDataResponseItem, onCatItemClick: (String) -> Unit,
     onToggleClick: (CatDataResponseItem) -> Unit
 ) {
     val isFavorite = catDataResponseItem.isFavorite
@@ -82,12 +83,12 @@ fun CatItems(
             .padding(8.dp)
             .clickable {
                 when {
-                    catDataResponseItem.breeds?.isNullOrEmpty() == true -> onCatItemClick(
-                        catDataResponseItem.id
+                    catDataResponseItem.catItem.breeds?.isNullOrEmpty() == true -> onCatItemClick(
+                        catDataResponseItem.catItem.id
                     )
 
                     else -> onCatItemClick(
-                        catDataResponseItem.breeds?.get(0)?.description ?: catDataResponseItem.id
+                        catDataResponseItem.catItem.breeds?.get(0)?.description ?: catDataResponseItem.catItem.id
                     )
                 }
             }
@@ -97,7 +98,7 @@ fun CatItems(
         ) {
 
             Image(
-                painter = rememberAsyncImagePainter(model = catDataResponseItem.url),
+                painter = rememberAsyncImagePainter(model = catDataResponseItem.catItem.url),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -114,7 +115,7 @@ fun CatItems(
             ) {
 
                 Text(
-                    text = catDataResponseItem.id,
+                    text = catDataResponseItem.catItem.id,
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -126,7 +127,7 @@ fun CatItems(
                 contentDescription = null,
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { onToggleClick(catDataResponseItem) }
+                    .clickable { onToggleClick(catDataResponseItem.catItem) }
             )
         }
     }

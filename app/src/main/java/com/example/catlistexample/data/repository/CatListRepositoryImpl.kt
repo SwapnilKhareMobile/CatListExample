@@ -1,52 +1,37 @@
 package com.example.catlistexample.data.repository
 
-import com.example.catlistexample.data.resource.RemoteCatListSource
-import com.example.catlistexample.datastore.CatDataStore
-import com.example.catlistexample.model.CatDataResponseItem
-import kotlinx.coroutines.Dispatchers
+import com.example.catlistexample.data.resource.LocalCatDataSourceImpl
+import com.example.catlistexample.data.resource.RemoteDataSource
+import com.example.catlistexample.model.FavCatDataResponseItem
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CatListRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteCatListSource,
-    private val localDataStore: CatDataStore
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataStore: LocalCatDataSourceImpl
 ) : CatDataRepository {
-
-    override suspend fun getCats(): Flow<List<CatDataResponseItem>> {
-        return remoteDataSource.fetchCatData()
-            .map { response ->
-                val catList = response.body() ?: emptyList()
-                catList.map { cat ->
-                    cat.copy(isFavorite = localDataStore.isCatSaved(cat.id).first())
-                }
-            }
-            .flowOn(Dispatchers.IO)
+    override suspend fun combinedData(): Flow<List<FavCatDataResponseItem>> = combine(
+        remoteDataSource.fetchCatData().map { response ->
+            response
+        },
+        localDataStore.favoriteStream
+    ) { catResources, favoriteIds ->
+        catResources.map { catResource ->
+            FavCatDataResponseItem(
+                catItem = catResource,
+                isFavorite = favoriteIds.contains(catResource.id)
+            )
+        }
     }
 
-    override suspend fun toggleCatFavorite(cat: CatDataResponseItem) {
-        val isFavorite = localDataStore.isCatSaved(cat.id).first()
-        if (isFavorite) localDataStore.removeSavedCat(cat.id) else
-            localDataStore.setSavedCat(cat.id, cat.url)
+    override suspend fun toggleFavoriteCats(catId:String,url:String,isFavorite:Boolean) {
+        localDataStore.toggleFavoriteCats(catId,url,isFavorite)
     }
 
-    fun getFavoriteCats(): Flow<List<CatDataResponseItem>> {
-        return localDataStore.getAllSavedCats()
-            .map { savedMap ->
-                savedMap.map { (id, url) ->
-                    CatDataResponseItem(
-                        id = id,
-                        url = url,
-                        breeds = emptyList(),
-                        height = 0,
-                        width = 0,
-                        isFavorite = true
-                    )
-                }
-            }
+    override suspend fun getFavoriteCats(): Flow<List<FavCatDataResponseItem>> {
+       return localDataStore.getFavoriteCats()
     }
 
 }

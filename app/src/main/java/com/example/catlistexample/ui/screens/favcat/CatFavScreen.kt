@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.example.catlistexample.model.CatDataResponseItem
+import com.example.catlistexample.model.FavCatDataResponseItem
 
 @Composable
 fun CatFavScreen(
@@ -82,11 +83,11 @@ fun CatItems(catDataResponseItem: CatDataResponseItem) {
 }
 
 @Composable
-fun ShowFavoriteCats(item: List<CatDataResponseItem>) {
+fun ShowFavoriteCats(item: List<FavCatDataResponseItem>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item.forEach {
             item {
-                CatItems(catDataResponseItem = it)
+                CatItems(catDataResponseItem = it.catItem)
             }
 
         }

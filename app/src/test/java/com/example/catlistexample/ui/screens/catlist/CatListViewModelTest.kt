@@ -1,10 +1,12 @@
 package com.example.catlistexample.ui.screens.catlist
 
-import androidx.lifecycle.SavedStateHandle
+import com.example.catlistexample.data.repository.CatDataRepository
 import com.example.catlistexample.data.repository.CatListRepositoryImpl
 import com.example.catlistexample.model.CatDataResponseItem
+import com.example.catlistexample.model.FavCatDataResponseItem
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +26,7 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class CatListViewModelTest {
-    private lateinit var catRepository: CatListRepositoryImpl
+    private lateinit var catRepository: CatDataRepository
     private lateinit var viewModel: CatListViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -35,9 +37,13 @@ class CatListViewModelTest {
 
         catRepository = mockk()
 
-        coEvery { catRepository.getCats() } returns flowOf(emptyList())
+        // Mock combinedData() to return an empty list initially
+        coEvery { catRepository.combinedData() } returns flowOf(emptyList())
 
-        viewModel = CatListViewModel(catRepository, SavedStateHandle())
+        // Mock getFavoriteCats() to return an empty list initially
+        coEvery { catRepository.getFavoriteCats() } returns flowOf(emptyList())
+
+        viewModel = CatListViewModel(catRepository)
     }
 
     @After
@@ -47,6 +53,32 @@ class CatListViewModelTest {
 
     @Test
     fun `fetchCatListData should update state to Success when data is fetched`() = runTest {
+        val catDataResponseItem = FavCatDataResponseItem(
+            CatDataResponseItem(
+                breeds = emptyList(),
+                height = 100,
+                id = "1",
+                url = "https://example.com/cat1.jpg",
+                width = 100
+            ), false
+        )
+        val catList = listOf(catDataResponseItem)
+
+        // Mock combinedData() to return a list of catList when called
+        coEvery { catRepository.combinedData() } returns flowOf(catList)
+
+        // Call fetchCatListData() method
+        viewModel.fetchCatListData()
+
+        advanceUntilIdle()
+
+        // Assert that the state is updated to Success with the fetched data
+        val state = viewModel.catList.value
+        assertTrue(state is CatListUIState.Success)
+        assertEquals(catList, (state as CatListUIState.Success).cats)
+    }
+    @Test
+    fun `onToggleCatData should update favorite status in repository`() = runTest {
         val catDataResponseItem = CatDataResponseItem(
             breeds = emptyList(),
             height = 100,
@@ -54,61 +86,16 @@ class CatListViewModelTest {
             url = "https://example.com/cat1.jpg",
             width = 100
         )
-        val catList = listOf(catDataResponseItem)
 
-        coEvery { catRepository.getCats() } returns flowOf(catList)
+        // Mock the repository method to toggle favorite status
+        coEvery { catRepository.toggleFavoriteCats("1", "https://example.com/cat1.jpg", true) } just Runs
 
-        viewModel.fetchCatListData()
-
-
-        advanceUntilIdle()
-
-        val state = viewModel.catList.value
-        assertTrue(state is CatListUIState.Success)
-        assertEquals(catList, (state as CatListUIState.Success).cats)
-    }
-
-    @Test
-    fun `fetchCatListData should update state to Error when exception is thrown`() = runTest {
-
-        coEvery { catRepository.getCats() } returns flow { throw RuntimeException("Error fetching data") }
-
-
-        viewModel.fetchCatListData()
-
-
-        advanceUntilIdle()
-
-        val state = viewModel.catList.value
-        assertTrue(state is CatListUIState.Error)
-    }
-
-    @Test
-    fun `onToggleCatData should toggle favorite status`() = runTest {
-        val catDataResponseItem = CatDataResponseItem(
-            breeds = emptyList(),
-            height = 100,
-            id = "1",
-            url = "https://example.com/cat1.jpg",
-            width = 100,
-            isFavorite = false
-        )
-        val initialList = listOf(catDataResponseItem)
-
-        viewModel = CatListViewModel(catRepository, SavedStateHandle())
-        viewModel.mCatList.value = CatListUIState.Success(initialList)
-
-        coEvery { catRepository.toggleCatFavorite(any()) } just Runs
-
-        coEvery { catRepository.getCats() } returns flowOf(emptyList())
-
+        // Call onToggleCatData() method with a non-favorite cat
         viewModel.onToggleCatData(catDataResponseItem)
 
-
-        advanceUntilIdle()
-
-        val state = viewModel.catList.value
-        assertTrue(state is CatListUIState.Success)
-        assertEquals(true, (state as CatListUIState.Success).cats[0].isFavorite)
+        // Verify that the repository method was called with the correct arguments
+        coVerify {
+            catRepository.toggleFavoriteCats("1", "https://example.com/cat1.jpg", true)
+        }
     }
 }

@@ -6,5 +6,4 @@ data class CatDataResponseItem(
     val id: String,
     val url: String,
     val width: Int,
-    val isFavorite: Boolean = false
 )
